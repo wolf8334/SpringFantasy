@@ -76,8 +76,8 @@ public class ShiroConfig {
 		log.info("加载Filter");
 		DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
 		chainDefinition.addPathDefinition("/login", "authc");
+		chainDefinition.addPathDefinition("/loginajax/**", "anon");
 		chainDefinition.addPathDefinition("/**", "user");
-		chainDefinition.addPathDefinition("/hello", "anon");
 		chainDefinition.addPathDefinition("/logout", "logout");
 		return chainDefinition;
 	}
@@ -92,6 +92,9 @@ public class ShiroConfig {
 	public ShiroFilterFactoryBean shiroFilterFactoryBean() {
 		ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
 		filterFactoryBean.setSecurityManager(SecurityUtils.getSecurityManager());
+		filterFactoryBean.setLoginUrl("/login");
+		filterFactoryBean.setSuccessUrl("/hello");
+		filterFactoryBean.setUnauthorizedUrl("/login");
 		filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition().getFilterChainMap());
 		return filterFactoryBean;
 	}

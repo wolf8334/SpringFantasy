@@ -1,7 +1,6 @@
 package com.xhr.springboot.service;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 
 import javax.annotation.PostConstruct;
 
@@ -15,13 +14,13 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Objects;
+import com.xhr.springboot.entity.User;
 
 @Service
 public class ShiroDbRealm extends AuthorizingRealm {
@@ -38,13 +37,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
 		log.info("加载doGetAuthenticationInfo");
 		UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
-		log.info(token.getUsername().equals("admin") + "");
-		String pwd = new String(token.getPassword());
-		log.info(pwd.equals("admin") + "");
-		// 写死admin admin
-		if (token != null && token.getUsername().equals("admin") && pwd.equals("admin")) {
-			return new SimpleAuthenticationInfo(new ShiroUser(1L, "admin", "admin"), token.getPassword(), ByteSource.Util.bytes(token.getPassword()),
-					getName());
+		User user = service.findByUsername(token.getUsername());
+		if (user != null) {
+			return new SimpleAuthenticationInfo(new ShiroUser(user.getId(), user.getRealname(), user.getUsername()), user.getPassword(), user.getRealname());
 		} else {
 			return null;
 		}
@@ -56,11 +51,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		ShiroUser shiroUser = (ShiroUser) principals.getPrimaryPrincipal();
-		LinkedList<String> roleList = new LinkedList<String>();
-		roleList.add("admin");
-		roleList.add("user");
+		// User user = accountService.findUserByLoginName(shiroUser.loginName);
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-		info.addRoles(roleList);
+		// info.addRoles(user.getRoleList()); 待实现
 		return info;
 	}
 
@@ -70,7 +63,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	@PostConstruct
 	public void initCredentialsMatcher() {
 		HashedCredentialsMatcher matcher = new HashedCredentialsMatcher("MD5");
-		matcher.setHashIterations(1024);
+		matcher.setHashIterations(1);
 		setCredentialsMatcher(matcher);
 	}
 
@@ -79,11 +72,11 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	 */
 	public static class ShiroUser implements Serializable {
 		private static final long serialVersionUID = -1373760761780840081L;
-		public Long id;
+		public int id;
 		public String loginName;
 		public String name;
 
-		public ShiroUser(Long id, String loginName, String name) {
+		public ShiroUser(int id, String loginName, String name) {
 			this.id = id;
 			this.loginName = loginName;
 			this.name = name;

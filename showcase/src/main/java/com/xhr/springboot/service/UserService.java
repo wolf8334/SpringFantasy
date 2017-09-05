@@ -1,7 +1,5 @@
 package com.xhr.springboot.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,18 +16,8 @@ public class UserService {
 	@Autowired
 	private UserDao dao;
 
-	public User findByUsername(String username, String password) {
-		List<User> list = dao.findByUsername(username);
-		if (list != null && list.size() > 0) {
-			User user = list.get(0);
-			if (user.getPassword().equals(EncryptUtil.string2MD5(password))) {
-				return user;
-			} else {
-				return null;
-			}
-		} else {
-			return null;
-		}
+	public User findByUsername(String username) {
+		return dao.findByUsername(username);
 	}
 
 	public <S extends User> S save(S entity) {

@@ -17,6 +17,7 @@ public class SpringbootApplication {
 	private static Logger log = LoggerFactory.getLogger(SpringbootApplication.class);
 
 	public static void main(String[] args) {
+		log.debug("启动示例应用");
 		SpringApplication.run(SpringbootApplication.class, args);
 	}
 }

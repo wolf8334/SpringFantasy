@@ -16,9 +16,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Table(name = "t_dev_user", schema = "dev")
 public class User implements Serializable {
 
+	private static final long serialVersionUID = -8987852716581989097L;
+
 	private int id;
 	private String username;
 	private String password;
+	private String realname;
 
 	@Id
 	@Column(name = "id", precision = 10, scale = 0)
@@ -31,7 +34,7 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "username", length = 30)
+	@Column(name = "username", length = 60)
 	public String getUsername() {
 		return username;
 	}
@@ -40,13 +43,22 @@ public class User implements Serializable {
 		this.username = username;
 	}
 
-	@Column(name = "password", length = 30)
+	@Column(name = "password", length = 60)
 	public String getPassword() {
 		return password;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Column(name = "realname", length = 60)
+	public String getRealname() {
+		return realname;
+	}
+
+	public void setRealname(String realname) {
+		this.realname = realname;
 	}
 
 	@Override
