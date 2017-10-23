@@ -30,6 +30,10 @@ public class ShiroConfig {
 
 	private static Logger log = LoggerFactory.getLogger(ShiroConfig.class);
 
+	private String successUrl;
+	private String unauthorizeUrl;
+	private String loginUrl;
+
 	@ExceptionHandler(AuthorizationException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public String handleException(AuthorizationException e, Model model) {
