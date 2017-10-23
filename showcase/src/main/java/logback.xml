@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- debug="true" 启动时输出配置加载信息 scan="true" 默认每分钟自动扫描 scanPeriod="30 seconds" 
+	设置每30秒自动扫描,若没有指定具体单位则以milliseconds为标准(单位:milliseconds, seconds, minutes or 
+	hours) -->
+<configuration scan="true" scanPeriod="60 seconds" debug="true">
+
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{40} - %msg%n
+			</pattern>
+		</layout>
+	</appender>
+
+	<!-- 所有日志文件 -->
+	<appender name="DebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>debug_%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>200MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{40} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 为某个包下的所有类指定Appender 这里也可以指定类名称例如：com.aa.bb.ClassName -->
+	<root level="INFO">
+		<appender-ref ref="stdout" />
+	</root>
+</configuration>

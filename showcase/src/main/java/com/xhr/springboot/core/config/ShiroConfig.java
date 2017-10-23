@@ -13,6 +13,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,9 +31,26 @@ public class ShiroConfig {
 
 	private static Logger log = LoggerFactory.getLogger(ShiroConfig.class);
 
+	@Value("${shiro.successUrl}")
 	private String successUrl;
+
+	@Value("${shiro.unauthorizeUrl}")
 	private String unauthorizeUrl;
+
+	@Value("${shiro.loginUrl}")
 	private String loginUrl;
+
+	@Value("${shiro.PathDefine.user}")
+	private String[] userUrl;
+
+	@Value("${shiro.PathDefine.anon}")
+	private String[] anonUrl;
+
+	@Value("${shiro.PathDefine.authc}")
+	private String authc;
+
+	@Value("${shiro.PathDefine.logout}")
+	private String logout;
 
 	@ExceptionHandler(AuthorizationException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
@@ -79,10 +97,18 @@ public class ShiroConfig {
 	public DefaultShiroFilterChainDefinition shiroFilterChainDefinition() {
 		log.info("加载Filter");
 		DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-		chainDefinition.addPathDefinition("/login", "authc");
-		chainDefinition.addPathDefinition("/loginajax/**", "anon");
-		chainDefinition.addPathDefinition("/**", "user");
-		chainDefinition.addPathDefinition("/logout", "logout");
+		log.info("authc " + authc);
+		chainDefinition.addPathDefinition(authc, "authc");
+		for (String anonurl : anonUrl) {
+			log.info("anonUrl " + anonurl);
+			chainDefinition.addPathDefinition(anonurl, "anon");
+		}
+		for (String userurl : userUrl) {
+			log.info("userurl " + userurl);
+			chainDefinition.addPathDefinition(userurl, "user");
+		}
+		log.info("logout " + logout);
+		chainDefinition.addPathDefinition(logout, "logout");
 		return chainDefinition;
 	}
 
@@ -96,9 +122,9 @@ public class ShiroConfig {
 	public ShiroFilterFactoryBean shiroFilterFactoryBean() {
 		ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
 		filterFactoryBean.setSecurityManager(SecurityUtils.getSecurityManager());
-		filterFactoryBean.setLoginUrl("/login");
-		filterFactoryBean.setSuccessUrl("/hello");
-		filterFactoryBean.setUnauthorizedUrl("/login");
+		filterFactoryBean.setLoginUrl(successUrl);
+		filterFactoryBean.setSuccessUrl(successUrl);
+		filterFactoryBean.setUnauthorizedUrl(unauthorizeUrl);
 		filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition().getFilterChainMap());
 		return filterFactoryBean;
 	}

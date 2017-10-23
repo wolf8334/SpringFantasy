@@ -85,6 +85,11 @@
 			<version>6.0.5</version>
 		</dependency>
 		<dependency>
+		  <groupId>postgresql</groupId>
+		  <artifactId>postgresql</artifactId>
+		  <version>9.4.1208-jdbc42-atlassian-hosted</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.6</version>
